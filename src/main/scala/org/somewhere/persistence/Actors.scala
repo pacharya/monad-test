@@ -11,10 +11,10 @@ private[persistence] object Actors {
     ("A2", "Actor2"),
     ("A3", "Actor3"),
     ("A4", "Actor4"),
-    ("A1", "Actor1"),
-    ("A2", "Actor2"),
-    ("A3", "Actor3"),
-    ("A4", "Actor4")
+    ("A5", "Actor5"),
+    ("A6", "Actor6"),
+    ("A7", "Actor7"),
+    ("A8", "Actor8")
   ).map(toMapTuple).toMap
 
   def getActor(actorId: String) : Option[Actor] = allActors.get(actorId)

@@ -7,13 +7,8 @@ import scalaz._
 
 import org.somewhere.model.Actor
 
-trait CatalogService {
-  def getActorsForMovieIds(movieIds: List[String],
-                           movieService: MovieService,
-                           actorService: ActorService): IO[Map[String, List[Actor]]]
-}
+class NaiveCatalogService extends CatalogService {
 
-object SimpleCatalogService extends CatalogService {
   def getActorsForMovieIds(movieIds: List[String],
                            movieService: MovieService,
                            actorService: ActorService): IO[Map[String, List[Actor]]] = {
@@ -27,4 +22,5 @@ object SimpleCatalogService extends CatalogService {
     }
     movieIdAndActors map(_.toMap)
   }
+
 }
