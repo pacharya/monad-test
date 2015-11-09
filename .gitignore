@@ -1,0 +1,8 @@
+.idea*
+.iml*
+*.iml
+target
+project/target
+project/project
+project/idea.sbt
+project/*.iml
