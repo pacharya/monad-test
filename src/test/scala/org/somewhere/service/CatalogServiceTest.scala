@@ -18,4 +18,16 @@ class CatalogServiceTest extends FunSuite {
     assert(m4Actors(4).name === "Actor6")
   }
 
+  test("SimpleCachingActorService supports the catalog service") {
+    val moviesToActors: Map[String, List[Actor]] =
+      SimpleCachingCatalogService.getActorsForMovieIdsWithCache(
+        List("M1","M4","M7"),
+        SimpleMovieService,
+        SimpleCachingActorService).unsafePerformIO
+    assert(moviesToActors.size == 3)
+    val m4Actors = moviesToActors.getOrElse("M4",Nil)
+    assert(m4Actors.length == 6)
+    assert(m4Actors(4).name === "Actor6")
+  }
+
 }

@@ -7,6 +7,8 @@ import scalaz._
 
 import org.somewhere.model.Actor
 
+import org.somewhere.types._
+
 trait CatalogService {
   def getActorsForMovieIds(movieIds: List[String],
                            movieService: MovieService,
@@ -28,3 +30,30 @@ object SimpleCatalogService extends CatalogService {
     movieIdAndActors map(_.toMap)
   }
 }
+
+trait CachingCatalogService {
+  def getActorsForMovieIdsWithCache(movieIds: List[String],
+                                    movieService: MovieService,
+                                    actorService: CachingActorService): IO[Map[String, List[Actor]]]
+}
+
+object SimpleCachingCatalogService extends CachingCatalogService {
+  def getActorsForMovieIdsWithCache(movieIds: List[String],
+                                    movieService: MovieService,
+                                    actorService: CachingActorService): IO[Map[String, List[Actor]]] = {
+
+    val movieIdAndActors = movieIds traverseU { movieId =>
+      for {
+        actorIds <-
+          movieService.getActorIdsForMovieId(movieId)
+            .liftM[ActorCacheMonadT]
+        actors <- actorIds traverseU { actorId =>
+          actorService.getActorByIdWithCache(actorId)
+        }
+      } yield (movieId, actors.flatten)
+    }
+    val movieIdToActorsMap = movieIdAndActors map { _.toMap }
+    movieIdToActorsMap.run( Map.empty[String, Actor]) map(_._2)
+  }
+}
+
